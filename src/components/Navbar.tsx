@@ -13,12 +13,12 @@ const Navbar: React.FC = () => {
   };
 
   return (
-    <nav className="app-navbar">
+    <nav className="app-navbar h-100 flex-column flex-md-row">
       <NavLink to="/dashboard" className="navbar-logo">
         CV<span>.</span>Api
       </NavLink>
 
-      <ul className="navbar-links" style={{ display: 'flex' }}>
+      <ul className="navbar-links flex-wrap" style={{ display: 'flex' }}>
         <li>
           <NavLink to="/dashboard" className={({ isActive }) => isActive ? 'active' : ''}>
             Dashboard
