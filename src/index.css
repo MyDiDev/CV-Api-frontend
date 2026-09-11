@@ -518,6 +518,41 @@ textarea.form-control {
   justify-content: space-around;
 }
 
+.mobile-tab-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  color: var(--text-secondary);
+  text-decoration: none;
+  font-size: 0.72rem;
+  font-weight: 500;
+  padding: 6px 12px;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  -webkit-tap-highlight-color: transparent;
+  font-family: var(--font-sans);
+}
+
+.mobile-tab-item:hover {
+  color: var(--text-primary);
+}
+
+.mobile-tab-item.active {
+  color: var(--brand-primary);
+  font-weight: 600;
+}
+
+.mobile-tab-item.active svg {
+  color: var(--brand-primary);
+  stroke: var(--brand-primary);
+}
+
+
 /* ─── PAGE CONTAINERS & CARDS ─── */
 .page-container {
   max-width: 1000px;
