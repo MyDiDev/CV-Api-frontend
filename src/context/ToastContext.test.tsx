@@ -139,4 +139,28 @@ describe('ToastContext', () => {
 
     spy.mockRestore();
   });
+
+  it('memoizes context value across provider re-renders when toasts remain unchanged', () => {
+    const capturedValues: any[] = [];
+    const ConsumerComponent = () => {
+      const value = useToast();
+      capturedValues.push(value);
+      return <div>Consumer</div>;
+    };
+
+    const Wrapper: React.FC<{ count: number }> = ({ count }) => {
+      return (
+        <ToastProvider>
+          <ConsumerComponent />
+          <span data-testid="count">{count}</span>
+        </ToastProvider>
+      );
+    };
+
+    const { rerender } = render(<Wrapper count={1} />);
+    rerender(<Wrapper count={2} />);
+
+    expect(capturedValues.length).toBe(2);
+    expect(capturedValues[0]).toBe(capturedValues[1]);
+  });
 });

@@ -21,6 +21,7 @@ const Documents: React.FC = () => {
   const [fetched, setFetched] = useState(false);
   const [copiedIdx, setCopiedIdx] = useState<number | null>(null);
   const [previewDoc, setPreviewDoc] = useState<PreviewDocument | null>(null);
+  const [isPreviewOpen, setIsPreviewOpen] = useState(false);
 
   const headerRef = useRef<HTMLDivElement>(null);
   const formCardRef = useRef<HTMLDivElement>(null);
@@ -352,7 +353,10 @@ const Documents: React.FC = () => {
                         <button
                           type="button"
                           className="btn-ghost"
-                          onClick={() => setPreviewDoc({ url, index: i, filename: fileName })}
+                          onClick={() => {
+                            setPreviewDoc({ url, index: i, filename: fileName });
+                            setIsPreviewOpen(true);
+                          }}
                           title="Vista previa del PDF"
                           style={{
                             padding: "0.35rem 0.65rem",
@@ -530,8 +534,8 @@ const Documents: React.FC = () => {
 
         {/* ─── PDF PREVIEW MODAL ─── */}
         <Modal
-          isOpen={!!previewDoc}
-          onClose={() => setPreviewDoc(null)}
+          isOpen={isPreviewOpen}
+          onClose={() => setIsPreviewOpen(false)}
           title={previewDoc ? `Vista previa: Reporte #${previewDoc.index + 1}` : "Vista previa de documento"}
           size="xl"
           footer={
@@ -556,7 +560,7 @@ const Documents: React.FC = () => {
               <button
                 type="button"
                 className="btn-ghost"
-                onClick={() => setPreviewDoc(null)}
+                onClick={() => setIsPreviewOpen(false)}
               >
                 Cerrar
               </button>
