@@ -11,6 +11,20 @@ interface PreviewDocument {
   filename: string;
 }
 
+/**
+ * Normalizes document URLs (specifically Cloudinary or CDN URLs) by ensuring HTTPS.
+ * This prevents mixed content security blocks and false-positive security warnings
+ * when rendering documents in iframes on secure sites.
+ */
+export const ensureSecureUrl = (url: string): string => {
+  if (!url) return "";
+  const trimmed = url.trim();
+  if (trimmed.startsWith("http://")) {
+    return trimmed.replace(/^http:\/\//i, "https://");
+  }
+  return trimmed;
+};
+
 const Documents: React.FC = () => {
   const { showToast } = useToast();
 
@@ -51,15 +65,16 @@ const Documents: React.FC = () => {
 
     try {
       const data = await api.getDocuments(apiKey.trim());
-      const urls = (data?.result?.documents || [])
+      const rawUrls = (data?.result?.documents || [])
         .map((row: string[]) => row[0])
         .filter(Boolean);
-      setDocs(urls);
+      const secureUrls = rawUrls.map(ensureSecureUrl);
+      setDocs(secureUrls);
       setFetched(true);
-      if (urls.length > 0) {
+      if (secureUrls.length > 0) {
         showToast(
-          `Se ${urls.length === 1 ? "encontró 1 documento" : `encontraron ${urls.length} documentos`}`,
-          "success"
+          `Se ${secureUrls.length === 1 ? "encontró 1 documento" : `encontraron ${secureUrls.length} documentos`}`,
+          "success",
         );
       } else {
         showToast("No se encontraron documentos para esta API Key", "info");
@@ -76,7 +91,8 @@ const Documents: React.FC = () => {
 
   const handleCopy = async (url: string, index?: number) => {
     try {
-      await navigator.clipboard.writeText(url);
+      const secureUrl = ensureSecureUrl(url);
+      await navigator.clipboard.writeText(secureUrl);
       if (typeof index === "number") {
         setCopiedIdx(index);
         setTimeout(() => setCopiedIdx(null), 2000);
@@ -89,7 +105,8 @@ const Documents: React.FC = () => {
 
   const getFileName = (url: string) => {
     try {
-      const parts = new URL(url).pathname.split("/");
+      const secureUrl = ensureSecureUrl(url);
+      const parts = new URL(secureUrl).pathname.split("/");
       return decodeURIComponent(parts[parts.length - 1]);
     } catch {
       return url;
@@ -104,7 +121,8 @@ const Documents: React.FC = () => {
         <div ref={headerRef} className="page-header">
           <h1 className="page-title">Documentos generados</h1>
           <p className="page-desc">
-            Reportes PDF creados a partir de evaluaciones de CV, respaldados en el CDN
+            Reportes PDF creados a partir de evaluaciones de CV, respaldados en
+            el CDN
           </p>
         </div>
 
@@ -133,7 +151,8 @@ const Documents: React.FC = () => {
               lineHeight: 1.5,
             }}
           >
-            Ingresa tu API Key para consultar los documentos y evaluaciones asociados a ella.
+            Ingresa tu API Key para consultar los documentos y evaluaciones
+            asociados a ella.
           </p>
 
           <form
@@ -253,7 +272,8 @@ const Documents: React.FC = () => {
                     Aún no hay reportes generados con esta API Key
                   </p>
                   <p className="empty-state-text">
-                    Evalúa un CV primero para que los reportes PDF se archiven aquí.
+                    Evalúa un CV primero para que los reportes PDF se archiven
+                    aquí.
                   </p>
                 </div>
               </div>
@@ -354,7 +374,11 @@ const Documents: React.FC = () => {
                           type="button"
                           className="btn-ghost"
                           onClick={() => {
-                            setPreviewDoc({ url, index: i, filename: fileName });
+                            setPreviewDoc({
+                              url,
+                              index: i,
+                              filename: fileName,
+                            });
                             setIsPreviewOpen(true);
                           }}
                           title="Vista previa del PDF"
@@ -403,7 +427,14 @@ const Documents: React.FC = () => {
                             strokeLinejoin="round"
                             aria-hidden="true"
                           >
-                            <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
+                            <rect
+                              x="9"
+                              y="9"
+                              width="13"
+                              height="13"
+                              rx="2"
+                              ry="2"
+                            />
                             <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
                           </svg>
                           <span>{copiedIdx === i ? "Copiado" : "Copiar"}</span>
@@ -486,7 +517,8 @@ const Documents: React.FC = () => {
                 Consulta tus reportes archivados
               </p>
               <p className="empty-state-text">
-                Ingresa tu API Key en la barra superior para ver los reportes PDF
+                Ingresa tu API Key en la barra superior para ver los reportes
+                PDF
                 <br />
                 generados en tus evaluaciones de CV.
               </p>
@@ -536,7 +568,11 @@ const Documents: React.FC = () => {
         <Modal
           isOpen={isPreviewOpen}
           onClose={() => setIsPreviewOpen(false)}
-          title={previewDoc ? `Vista previa: Reporte #${previewDoc.index + 1}` : "Vista previa de documento"}
+          title={
+            previewDoc
+              ? `Vista previa: Reporte #${previewDoc.index + 1}`
+              : "Vista previa de documento"
+          }
           size="xl"
           footer={
             <>
@@ -568,7 +604,13 @@ const Documents: React.FC = () => {
           }
         >
           {previewDoc && (
-            <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                gap: "0.75rem",
+              }}
+            >
               <div
                 style={{
                   display: "flex",
@@ -598,7 +640,11 @@ const Documents: React.FC = () => {
                   download
                   target="_blank"
                   rel="noreferrer"
-                  style={{ color: "var(--info)", fontSize: "0.78rem", whiteSpace: "nowrap" }}
+                  style={{
+                    color: "var(--info)",
+                    fontSize: "0.78rem",
+                    whiteSpace: "nowrap",
+                  }}
                 >
                   Descargar PDF ⤓
                 </a>

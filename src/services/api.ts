@@ -87,7 +87,17 @@ export const api = {
       const data = await res.json().catch(() => ({}));
       throw new Error(data.error || data.detail || 'No hay documentos generados');
     }
-    return res.json();
+    const json = await res.json();
+    if (json?.result?.documents && Array.isArray(json.result.documents)) {
+      json.result.documents = json.result.documents.map((row: string[]) =>
+        row.map((url: string) =>
+          typeof url === 'string' && url.startsWith('http://')
+            ? url.replace(/^http:\/\//i, 'https://')
+            : url
+        )
+      );
+    }
+    return json;
   },
 
   async evaluateCV(apiKey: string, content: string) {
