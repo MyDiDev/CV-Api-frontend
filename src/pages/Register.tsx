@@ -17,14 +17,25 @@ const Register: React.FC = () => {
   const navigate = useNavigate();
 
   const cardRef = useRef<HTMLDivElement>(null);
+  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
     animateEnter(cardRef.current);
+    return () => {
+      if (timerRef.current) {
+        clearTimeout(timerRef.current);
+      }
+    };
   }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError("");
+    if (!username.trim() || !password || !confirm) {
+      const msg = "Por favor completa todos los campos";
+      setError(msg);
+      showToast(msg, "warning");
+      return;
+    }
 
     if (password !== confirm) {
       const msg = "Las contraseñas no coinciden";
@@ -33,12 +44,13 @@ const Register: React.FC = () => {
       return;
     }
 
+    setError("");
     setLoading(true);
     try {
       await api.register(username, password);
       setSuccess(true);
       showToast("¡Cuenta creada con éxito! Redirigiendo al inicio de sesión…", "success");
-      setTimeout(() => navigate("/login"), 1800);
+      timerRef.current = setTimeout(() => navigate("/login"), 1800);
     } catch (err: any) {
       const msg = err.message || "Error al registrar la cuenta";
       setError(msg);
@@ -96,7 +108,7 @@ const Register: React.FC = () => {
             </div>
           )}
 
-          <form onSubmit={handleSubmit} noValidate>
+          <form onSubmit={handleSubmit}>
             <div className="mb-3">
               <label htmlFor="reg-username" className="form-label">
                 Usuario
@@ -151,7 +163,6 @@ const Register: React.FC = () => {
                   onClick={() => setShowPassword(!showPassword)}
                   aria-label={showPassword ? "Ocultar contraseña" : "Mostrar contraseña"}
                   title={showPassword ? "Ocultar contraseña" : "Mostrar contraseña"}
-                  tabIndex={-1}
                 >
                   {showPassword ? (
                     <svg
@@ -223,7 +234,6 @@ const Register: React.FC = () => {
                   onClick={() => setShowConfirm(!showConfirm)}
                   aria-label={showConfirm ? "Ocultar confirmación de contraseña" : "Mostrar confirmación de contraseña"}
                   title={showConfirm ? "Ocultar confirmación de contraseña" : "Mostrar confirmación de contraseña"}
-                  tabIndex={-1}
                 >
                   {showConfirm ? (
                     <svg

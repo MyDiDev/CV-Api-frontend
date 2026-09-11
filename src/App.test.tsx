@@ -39,4 +39,12 @@ describe("App Authentication Views", () => {
     expect(screen.getByLabelText(/^confirmar contraseña$/i)).toBeInTheDocument();
     expect(screen.getByRole("button", { name: /crear cuenta/i })).toBeInTheDocument();
   });
+
+  it("allows keyboard focus on password visibility toggle button", () => {
+    render(<App />);
+    const toggleBtn = screen.getByRole("button", { name: /mostrar contraseña/i });
+    expect(toggleBtn).not.toHaveAttribute("tabindex", "-1");
+    toggleBtn.focus();
+    expect(toggleBtn).toHaveFocus();
+  });
 });

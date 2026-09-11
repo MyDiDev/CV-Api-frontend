@@ -23,6 +23,12 @@ const Login: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!username.trim() || !password) {
+      const msg = "Por favor ingresa tu usuario y contraseña";
+      setError(msg);
+      showToast(msg, "warning");
+      return;
+    }
     setError("");
     setLoading(true);
     try {
@@ -81,7 +87,7 @@ const Login: React.FC = () => {
             </div>
           )}
 
-          <form onSubmit={handleSubmit} noValidate>
+          <form onSubmit={handleSubmit}>
             <div className="mb-3">
               <label htmlFor="login-username" className="form-label">
                 Usuario
@@ -136,7 +142,6 @@ const Login: React.FC = () => {
                   onClick={() => setShowPassword(!showPassword)}
                   aria-label={showPassword ? "Ocultar contraseña" : "Mostrar contraseña"}
                   title={showPassword ? "Ocultar contraseña" : "Mostrar contraseña"}
-                  tabIndex={-1}
                 >
                   {showPassword ? (
                     <svg
