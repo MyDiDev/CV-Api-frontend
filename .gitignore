@@ -29,3 +29,7 @@ Thumbs.db
 # Many teams keep tsconfig.tsbuildinfo for faster incremental builds, 
 # but you can ignore it if you prefer fresh builds.
 *.tsbuildinfo
+
+
+# Agent Docs
+docs/
