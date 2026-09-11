@@ -40,14 +40,15 @@ export const animateModalClose = (
   dialog: HTMLElement | null,
   onComplete?: () => void
 ): void => {
+  if (!dialog && !backdrop) {
+    onComplete?.();
+    return;
+  }
   const tl = gsap.timeline({ onComplete });
   if (dialog) {
     tl.to(dialog, { opacity: 0, scale: 0.96, duration: 0.18, ease: 'power2.in' }, 0);
   }
   if (backdrop) {
     tl.to(backdrop, { opacity: 0, duration: 0.18, ease: 'power2.in' }, 0);
-  }
-  if (!dialog && !backdrop && onComplete) {
-    onComplete();
   }
 };
