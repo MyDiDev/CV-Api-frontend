@@ -44,7 +44,7 @@ const Dashboard: React.FC = () => {
         setRefreshing(false);
       }
     },
-    [token, showToast]
+    [token, showToast],
   );
 
   useEffect(() => {
@@ -62,12 +62,24 @@ const Dashboard: React.FC = () => {
 
   // Compute metrics
   const totalRequests = logs.length;
-  const totalTokens = logs.reduce((acc, r) => acc + (typeof r[0] === "number" ? r[0] : 0), 0);
-  const successCount = logs.filter((r) => r[1] === "done" || r[1] === "success").length;
+  const totalTokens = logs.reduce(
+    (acc, r) => acc + (typeof r[0] === "number" ? r[0] : 0),
+    0,
+  );
+  const successCount = logs.filter(
+    (r) => r[1] === "done" || r[1] === "success",
+  ).length;
   const errorCount = totalRequests - successCount;
-  const successPercentage = totalRequests ? Math.round((successCount / totalRequests) * 100) : 0;
+  const successPercentage = totalRequests
+    ? Math.round((successCount / totalRequests) * 100)
+    : 0;
   const avgTime = totalRequests
-    ? Math.round(logs.reduce((acc, r) => acc + (typeof r[2] === "number" ? r[2] : 0), 0) / totalRequests)
+    ? Math.round(
+        logs.reduce(
+          (acc, r) => acc + (typeof r[2] === "number" ? r[2] : 0),
+          0,
+        ) / totalRequests,
+      )
     : 0;
 
   const stats = [
@@ -179,7 +191,9 @@ const Dashboard: React.FC = () => {
         >
           <div>
             <h1 className="page-title">Dashboard</h1>
-            <p className="page-desc">Estadísticas de uso de tu API Key y telemetría</p>
+            <p className="page-desc">
+              Estadísticas de uso de tu API Key y telemetría
+            </p>
           </div>
 
           <button
@@ -300,7 +314,10 @@ const Dashboard: React.FC = () => {
 
           {loading && (
             <div className="empty-state">
-              <span className="spinner-brand" style={{ width: 28, height: 28 }} />
+              <span
+                className="spinner-brand"
+                style={{ width: 28, height: 28 }}
+              />
               <p className="empty-state-text mt-3">Cargando telemetría…</p>
             </div>
           )}
@@ -339,7 +356,8 @@ const Dashboard: React.FC = () => {
                 Sin solicitudes todavía
               </p>
               <p className="empty-state-text">
-                Usa tu API Key para evaluar CVs o generar cuestionarios y ver la telemetría aquí.
+                Usa tu API Key para evaluar CVs o generar cuestionarios y ver la
+                telemetría aquí.
               </p>
             </div>
           )}
@@ -377,7 +395,9 @@ const Dashboard: React.FC = () => {
                               color: "var(--text-primary)",
                             }}
                           >
-                            {typeof row[0] === "number" ? row[0].toLocaleString() : row[0]}
+                            {typeof row[0] === "number"
+                              ? row[0].toLocaleString()
+                              : row[0]}
                           </span>
                         </td>
                         <td>
@@ -416,7 +436,9 @@ const Dashboard: React.FC = () => {
                         className="log-card-value"
                         style={{ fontFamily: "var(--font-mono)" }}
                       >
-                        {typeof row[0] === "number" ? row[0].toLocaleString() : row[0]}
+                        {typeof row[0] === "number"
+                          ? row[0].toLocaleString()
+                          : row[0]}
                       </span>
                     </div>
                     <div className="log-card-row">

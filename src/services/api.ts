@@ -33,15 +33,10 @@ export const api = {
     return res.json();
   },
 
-  async getApiKey(username: string, password: string): Promise<{ api_key: string }> {
-    const form = new URLSearchParams();
-    form.append('username', username);
-    form.append('password', password);
-
+  async getApiKey(token: string): Promise<{ api_key: string }> {
     const res = await fetch(`${BASE_URL}/api/key`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-      body: form,
+      method: 'GET',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded', Authorization: `Bearer ${token}` },
     });
     
     if (!res.ok) {

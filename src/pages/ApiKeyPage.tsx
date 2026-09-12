@@ -47,15 +47,20 @@ const ApiKeyPage: React.FC = () => {
     return key.slice(0, 8) + "••••••••••••••••••••••••••••••••" + key.slice(-4);
   };
 
-  const getCredentialsFromToken = (): { username: string; password: string } => {
+  const getCredentialsFromToken = (): {
+    username: string;
+    password: string;
+  } => {
     const rawToken = token || localStorage.getItem("cv_api_token") || "";
     if (!rawToken) {
-      throw new Error("No hay una sesión activa. Por favor, inicia sesión nuevamente.");
+      throw new Error(
+        "No hay una sesión activa. Por favor, inicia sesión nuevamente.",
+      );
     }
     const decoded = jwtDecode<DecodedToken>(rawToken);
     if (!decoded.username || !decoded.password) {
       throw new Error(
-        "No se encontraron credenciales en el token. Por favor, inicia sesión nuevamente."
+        "No se encontraron credenciales en el token. Por favor, inicia sesión nuevamente.",
       );
     }
     return { username: decoded.username, password: decoded.password };
@@ -66,8 +71,7 @@ const ApiKeyPage: React.FC = () => {
     setSuccessMsg("");
     setLoading(true);
     try {
-      const { username, password } = getCredentialsFromToken();
-      const data = await api.getApiKey(username, password);
+      const data = await api.getApiKey(token || localStorage.getItem("cv_api_token") || "");
       setApiKey(data.api_key);
       setRevealed(false);
       setSuccessMsg("API Key recuperada correctamente");
@@ -171,7 +175,8 @@ const ApiKeyPage: React.FC = () => {
         <div ref={headerRef} className="page-header">
           <h1 className="page-title">API Key</h1>
           <p className="page-desc">
-            Gestiona tu clave de acceso para autenticar solicitudes a la API de evaluación
+            Gestiona tu clave de acceso para autenticar solicitudes a la API de
+            evaluación
           </p>
         </div>
 
@@ -180,9 +185,13 @@ const ApiKeyPage: React.FC = () => {
           <div className="col-12 col-lg-5">
             <div className="cv-card h-100" ref={mainCardRef}>
               <p className="section-label mb-2">Modo de operación</p>
-              
+
               {/* Segmented Mode Toggle Pill */}
-              <div className="mode-toggle mb-3" role="tablist" aria-label="Modo de API Key">
+              <div
+                className="mode-toggle mb-3"
+                role="tablist"
+                aria-label="Modo de API Key"
+              >
                 <button
                   type="button"
                   role="tab"
@@ -242,7 +251,9 @@ const ApiKeyPage: React.FC = () => {
                   className="btn-brand w-100"
                   disabled={loading}
                 >
-                  {loading && <span className="spinner-brand" aria-hidden="true" />}
+                  {loading && (
+                    <span className="spinner-brand" aria-hidden="true" />
+                  )}
                   <span>
                     {loading
                       ? "Procesando…"
@@ -293,7 +304,10 @@ const ApiKeyPage: React.FC = () => {
                 }}
               >
                 Usa esta clave como Bearer token en el header{" "}
-                <code style={{ color: "var(--brand-primary)" }}>Authorization</code> de tus peticiones.
+                <code style={{ color: "var(--brand-primary)" }}>
+                  Authorization
+                </code>{" "}
+                de tus peticiones.
               </p>
 
               {apiKey ? (
@@ -317,7 +331,9 @@ const ApiKeyPage: React.FC = () => {
                       type="button"
                       className="btn-ghost"
                       onClick={() => setRevealed((r) => !r)}
-                      aria-label={revealed ? "Ocultar API Key" : "Mostrar API Key"}
+                      aria-label={
+                        revealed ? "Ocultar API Key" : "Mostrar API Key"
+                      }
                     >
                       {revealed ? (
                         <>
@@ -375,7 +391,14 @@ const ApiKeyPage: React.FC = () => {
                         strokeLinejoin="round"
                         aria-hidden="true"
                       >
-                        <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
+                        <rect
+                          x="9"
+                          y="9"
+                          width="13"
+                          height="13"
+                          rx="2"
+                          ry="2"
+                        />
                         <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
                       </svg>
                       <span>{copiedKey ? "¡Copiado!" : "Copiar Key"}</span>
@@ -424,8 +447,8 @@ const ApiKeyPage: React.FC = () => {
                       margin: 0,
                     }}
                   >
-                    Haz clic en <strong>Ver mi Key</strong> o <strong>Crear nueva Key</strong> para
-                    obtener tu token.
+                    Haz clic en <strong>Ver mi Key</strong> o{" "}
+                    <strong>Crear nueva Key</strong> para obtener tu token.
                   </p>
                 </div>
               )}
@@ -465,7 +488,11 @@ const ApiKeyPage: React.FC = () => {
                   </button>
                 </div>
 
-                <pre className="code-block" tabIndex={0} aria-label="Código de ejemplo cURL">
+                <pre
+                  className="code-block"
+                  tabIndex={0}
+                  aria-label="Código de ejemplo cURL"
+                >
                   <code>{curlSnippet}</code>
                 </pre>
               </div>
@@ -585,7 +612,12 @@ const ApiKeyPage: React.FC = () => {
                       justifyContent: "space-between",
                     }}
                   >
-                    <span style={{ fontSize: "0.75rem", color: "var(--text-muted)" }}>
+                    <span
+                      style={{
+                        fontSize: "0.75rem",
+                        color: "var(--text-muted)",
+                      }}
+                    >
                       Máximo:
                     </span>
                     <span
@@ -679,9 +711,10 @@ const ApiKeyPage: React.FC = () => {
                     lineHeight: 1.5,
                   }}
                 >
-                  Al generar una nueva API Key, cualquier clave previamente asignada a tu
-                  cuenta será invalidada. Todas tus aplicaciones o llamadas que utilicen la clave
-                  anterior deberán actualizarse con la nueva clave.
+                  Al generar una nueva API Key, cualquier clave previamente
+                  asignada a tu cuenta será invalidada. Todas tus aplicaciones o
+                  llamadas que utilicen la clave anterior deberán actualizarse
+                  con la nueva clave.
                 </p>
               </div>
             </div>
@@ -693,4 +726,3 @@ const ApiKeyPage: React.FC = () => {
 };
 
 export default ApiKeyPage;
-
